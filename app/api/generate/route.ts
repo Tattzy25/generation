@@ -119,8 +119,9 @@ function baseHeaders(): Record<string, string> {
     Accept: "application/json, text/event-stream",
     "MCP-Protocol-Version": PROTOCOL_VERSION,
   }
-
-
+  // Optional auth, kept server-side only.
+  if (process.env.MCP_AUTHORIZATION) headers.Authorization = process.env.MCP_AUTHORIZATION
+  if (process.env.MCP_API_KEY) headers["X-API-Key"] = process.env.MCP_API_KEY
   return headers
 }
 
@@ -166,7 +167,7 @@ export async function POST(req: NextRequest) {
         params: {
           protocolVersion: PROTOCOL_VERSION,
           capabilities: {},
-          clientInfo: { name: "generation", version: "1.0.0" },
+          clientInfo: { name: "image-generator-ui", version: "1.0.0" },
         },
       }),
     })

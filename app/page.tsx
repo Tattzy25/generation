@@ -10,17 +10,12 @@ import { ImageGenerator } from "@/components/image-generator"
  * so nothing sensitive ships to the browser and there's no CORS.
  */
 const GENERATOR_CONFIG = {
-  // The MCP tool your backend exposes for this generator.
-  toolName: "generate_image",
-  // Static args that identify THIS generator. Rename / swap freely.
+  toolName: "Artists N Models",
+  fieldNames: { color: "COLOR" },
   arguments: {
-    version: "your-trained-model-version-id",
-    customer_id: "shopify-customer-id",
-    source_id: "storefront-source-id",
-    credits: 1,
+    version: "",
+    source_id: "ART-MOD-2000",
   },
-  // Optional: rename UI fields to match your tool's argument schema.
-  // fieldNames: { prompt: "prompt", aspectRatio: "aspect_ratio", numOutputs: "num_outputs", image: "image" },
 }
 
 export default function Page() {

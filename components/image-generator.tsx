@@ -19,6 +19,7 @@ import {
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Slider } from "@/components/ui/slider"
 
@@ -52,35 +53,26 @@ function fileToBase64(file: File): Promise<string> {
   })
 }
 
-/**
- * Maps the UI fields to the argument keys your MCP tool expects.
- * Swap these per generator without touching the component.
- */
 export interface FieldNames {
   prompt?: string
   aspectRatio?: string
   numOutputs?: string
   image?: string
+  version?: string
+  customerId?: string
+  sourceId?: string
+  color?: string
 }
 
 export interface GeneratorConfig {
-  /** MCP tool name, e.g. "credit_check" or your generation tool. */
   toolName: string
-  /**
-   * Static arguments that identify THIS generator: model/version id,
-   * customer_id, source_id, credit amount, etc. These are merged with
-   * the live UI values before the call. Swap these to reuse the
-   * component across many generators / trained models.
-   */
+  triggerWord?: string
   arguments?: Record<string, unknown>
-  /** Rename the UI fields to match your tool's argument schema. */
   fieldNames?: FieldNames
 }
 
 export interface ImageGeneratorProps {
-  /** Per-generator MCP config. */
   config: GeneratorConfig
-  /** Proxy endpoint that forwards to MCP. Defaults to "/api/generate". */
   endpoint?: string
   className?: string
 }
@@ -90,12 +82,18 @@ const DEFAULT_FIELD_NAMES: Required<FieldNames> = {
   aspectRatio: "aspect_ratio",
   numOutputs: "num_outputs",
   image: "image",
+  version: "version",
+  customerId: "customer_id",
+  sourceId: "source_id",
+  color: "color",
 }
 
 export function ImageGenerator({ config, endpoint = "/api/generate", className }: ImageGeneratorProps) {
   const [prompt, setPrompt] = useState("")
   const [aspect, setAspect] = useState<AspectRatio>("1:1")
   const [count, setCount] = useState(4)
+  const [customerId, setCustomerId] = useState("")
+  const [color, setColor] = useState("")
   const [file, setFile] = useState<File | null>(null)
   const [filePreview, setFilePreview] = useState<string | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
@@ -140,14 +138,16 @@ export function ImageGenerator({ config, endpoint = "/api/generate", className }
     try {
       const fields = { ...DEFAULT_FIELD_NAMES, ...config.fieldNames }
 
-      // Merge the generator's static identifying args (version, customer_id,
-      // source_id, credits...) with the live UI values.
       const args: Record<string, unknown> = {
         ...(config.arguments ?? {}),
         [fields.prompt]: prompt.trim(),
         [fields.aspectRatio]: aspect,
         [fields.numOutputs]: count,
+        timestamp: new Date().toISOString(),
       }
+
+      if (customerId) args[fields.customerId] = customerId
+      if (color) args[fields.color] = color
 
       if (file) {
         args[fields.image] = await fileToBase64(file)
@@ -176,7 +176,7 @@ export function ImageGenerator({ config, endpoint = "/api/generate", className }
     } finally {
       setLoading(false)
     }
-  }, [canGenerate, prompt, aspect, count, file, endpoint, config])
+  }, [canGenerate, prompt, aspect, count, customerId, color, file, endpoint, config])
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
@@ -225,6 +225,34 @@ export function ImageGenerator({ config, endpoint = "/api/generate", className }
             Press <kbd className="rounded bg-muted px-1 py-0.5 font-mono text-[10px]">⌘</kbd>{" "}
             <kbd className="rounded bg-muted px-1 py-0.5 font-mono text-[10px]">Enter</kbd> to generate
           </p>
+        </div>
+
+        {/* Color */}
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="color" className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Color
+          </label>
+          <Input
+            id="color"
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+            placeholder="e.g. #ff0000"
+            className="rounded-xl border-border bg-muted/40 text-sm"
+          />
+        </div>
+
+        {/* Customer ID */}
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="customer-id" className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Customer ID
+          </label>
+          <Input
+            id="customer-id"
+            value={customerId}
+            onChange={(e) => setCustomerId(e.target.value)}
+            placeholder="customer id"
+            className="rounded-xl border-border bg-muted/40 text-sm"
+          />
         </div>
 
         {/* Aspect ratio */}
