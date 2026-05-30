@@ -92,7 +92,7 @@ export function ImageGenerator({ config, endpoint = "/api/generate", className }
   const [prompt, setPrompt] = useState("")
   const [aspect, setAspect] = useState<AspectRatio>("1:1")
   const [count, setCount] = useState(4)
-  const [color, setColor] = useState<"black_and_white" | "full_color">("black_and_white")
+  const [color, setColor] = useState("")
   const [file, setFile] = useState<File | null>(null)
   const [filePreview, setFilePreview] = useState<string | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
@@ -359,8 +359,8 @@ export function ImageGenerator({ config, endpoint = "/api/generate", className }
           type="button"
           size="lg"
           onClick={handleGenerate}
-          disabled={!canGenerate}
-          className="mt-1 h-12 rounded-xl text-sm font-semibold"
+          disabled={loading}
+          className="mt-1 h-12 rounded-xl text-sm font-semibold disabled:opacity-100"
         >
           {loading ? (
             <>
@@ -378,7 +378,7 @@ export function ImageGenerator({ config, endpoint = "/api/generate", className }
       </div>
 
       {/* Output canvas */}
-      <div className="flex min-h-[420px] flex-1 flex-col bg-background p-6 sm:p-8">
+      <div className="flex min-h-[700px] flex-1 flex-col bg-background p-6 sm:p-8">
         <div className="mb-5 flex items-center justify-between">
           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Results</span>
           {images.length > 0 && !loading && (
