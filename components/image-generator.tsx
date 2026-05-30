@@ -201,8 +201,8 @@ export function ImageGenerator({ config, endpoint = "/api/generate", className }
             <Sparkles className="h-4 w-4" />
           </span>
           <div className="leading-tight">
-            <h2 className="text-sm font-semibold tracking-tight">Image Studio</h2>
-            <p className="text-xs text-muted-foreground">Describe it. Generate up to four.</p>
+            <h2 className="text-sm font-semibold tracking-tight">Generate</h2>
+            <p className="text-xs text-muted-foreground">Describe your tattoo. Generate up to four.</p>
           </div>
         </header>
 
@@ -378,7 +378,7 @@ export function ImageGenerator({ config, endpoint = "/api/generate", className }
       </div>
 
       {/* Output canvas */}
-      <div className="flex min-h-[700px] flex-1 flex-col bg-background p-6 sm:p-8">
+      <div className="flex flex-1 flex-col bg-background p-6 sm:p-8">
         <div className="mb-5 flex items-center justify-between">
           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Results</span>
           {images.length > 0 && !loading && (
