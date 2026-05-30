@@ -11,17 +11,18 @@ import { ImageGenerator } from "@/components/image-generator"
  */
 const GENERATOR_CONFIG = {
   toolName: "Artists N Models",
-  fieldNames: { color: "COLOR" },
+  fieldNames: { color: "COLOR", image: "artist_uploads" },
   arguments: {
     version: "",
     source_id: "ART-MOD-2000",
+    customer_id: "",
   },
 }
 
 export default function Page() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-muted/30 p-4 sm:p-8">
-      <div className="w-full max-w-5xl">
+    <main className="flex min-h-screen items-center justify-center bg-muted/30 p-4 sm:p-6">
+      <div className="w-full">
         <ImageGenerator config={GENERATOR_CONFIG} />
       </div>
     </main>

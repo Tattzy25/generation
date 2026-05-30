@@ -255,8 +255,20 @@ export async function POST(req: NextRequest) {
     .map((url) => ({ url }))
 
   if (images.length === 0) {
+    let backendMessage: string | null = null
+    try {
+      const outer = typeof parsed === "object" && parsed !== null ? parsed as Record<string, unknown> : null
+      const result = outer?.result as Record<string, unknown> | undefined
+      const content = Array.isArray(result?.content) ? result.content : null
+      const text = content?.[0]?.text
+      if (typeof text === "string") {
+        const inner = JSON.parse(text) as Record<string, unknown>
+        const body = inner?.body
+        if (typeof body === "string" && body.length > 0) backendMessage = body
+      }
+    } catch { /* fall through */ }
     return NextResponse.json(
-      { error: "No image URLs were found in the generation response.", detail: raw.slice(0, 500) },
+      { error: backendMessage ?? raw.slice(0, 500) },
       { status: 502 },
     )
   }

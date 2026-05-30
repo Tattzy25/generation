@@ -92,8 +92,7 @@ export function ImageGenerator({ config, endpoint = "/api/generate", className }
   const [prompt, setPrompt] = useState("")
   const [aspect, setAspect] = useState<AspectRatio>("1:1")
   const [count, setCount] = useState(4)
-  const [customerId, setCustomerId] = useState("")
-  const [color, setColor] = useState("")
+  const [color, setColor] = useState<"black_and_white" | "full_color">("black_and_white")
   const [file, setFile] = useState<File | null>(null)
   const [filePreview, setFilePreview] = useState<string | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
@@ -146,7 +145,6 @@ export function ImageGenerator({ config, endpoint = "/api/generate", className }
         timestamp: new Date().toISOString(),
       }
 
-      if (customerId) args[fields.customerId] = customerId
       if (color) args[fields.color] = color
 
       if (file) {
@@ -176,7 +174,7 @@ export function ImageGenerator({ config, endpoint = "/api/generate", className }
     } finally {
       setLoading(false)
     }
-  }, [canGenerate, prompt, aspect, count, customerId, color, file, endpoint, config])
+  }, [canGenerate, prompt, aspect, count, color, file, endpoint, config])
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
@@ -197,7 +195,7 @@ export function ImageGenerator({ config, endpoint = "/api/generate", className }
       )}
     >
       {/* Controls */}
-      <div className="flex flex-col gap-7 bg-background p-6 sm:p-8 lg:w-[420px] lg:shrink-0">
+      <div className="flex flex-col gap-7 bg-background p-6 sm:p-8 lg:w-1/2 lg:shrink-0">
         <header className="flex items-center gap-2.5">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground text-background">
             <Sparkles className="h-4 w-4" />
@@ -241,19 +239,6 @@ export function ImageGenerator({ config, endpoint = "/api/generate", className }
           />
         </div>
 
-        {/* Customer ID */}
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="customer-id" className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Customer ID
-          </label>
-          <Input
-            id="customer-id"
-            value={customerId}
-            onChange={(e) => setCustomerId(e.target.value)}
-            placeholder="customer id"
-            className="rounded-xl border-border bg-muted/40 text-sm"
-          />
-        </div>
 
         {/* Aspect ratio */}
         <div className="flex flex-col gap-2.5">
